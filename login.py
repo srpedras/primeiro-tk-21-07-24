@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import *
+import database
 from tkinter import messagebox
 
 
@@ -59,7 +60,8 @@ class Aplication():
         #botão de login
         def login():
             msg = messagebox.showinfo(title="Estado de Login",message="Parabens!login feito com sucesso.")
-            pass
+            pass          
+                  
         login_button = ctk.CTkButton(master=login_frame, text="Login", width=300, command=login)
         login_button.place(x=25, y=285)
 
@@ -88,10 +90,10 @@ class Aplication():
             email_login = ctk.CTkEntry(master=rg_frame, placeholder_text='E-mail de usuario',width=300, font = ('Roboto',15))
             email_login.place(x=25, y=145)
 
-            password_login = ctk.CTkEntry(master=rg_frame, placeholder_text='Login do usuario',width=300, font = ('Roboto',15), show="*")
+            password_login = ctk.CTkEntry(master=rg_frame, placeholder_text='Senha',width=300, font = ('Roboto',15), show="*")
             password_login.place(x=25, y=185)
 
-            cpassword_login = ctk.CTkEntry(master=rg_frame, placeholder_text='Confirme o login',width=300, font = ('Roboto',15), show="*")
+            cpassword_login = ctk.CTkEntry(master=rg_frame, placeholder_text='Confirme a Senha',width=300, font = ('Roboto',15), show="*")
             cpassword_login.place(x=25, y=225)
 
             checkbox = ctk.CTkCheckBox(master=rg_frame, text="Aceito os termos e Politicas  da empresa")
@@ -110,8 +112,21 @@ class Aplication():
 
             #salvando os dados
             def save_user():
-                msg = messagebox.showinfo(title="Estado do Cadastro", message="Parabens! Usuario cadastrado com sucesso.")
-                pass
+
+                Name =  username_login.get ()
+                Email = email_login.get ()
+                Password = password_login.get ()  
+                Cpasswords = cpassword_login.get()
+                database.cursor.execute(""" 
+                            INSERT INTO users  (Username , Email , Password )  VALUES(?,?,?)
+                """,(Name,Email,Password)) 
+                database.conn.commit()
+                if  Cpasswords == Password :               
+                    msg = messagebox.showinfo(title="Estado do Cadastro", message="Parabens! Usuario cadastrado com sucesso.")
+                    pass
+                else:
+                    msg = messagebox.showinfo(title="Estado do Cadastro", message="As senhas precisam ser iguais!.")
+
 
             save_button = ctk.CTkButton(master=rg_frame, text="Cadastrar", width=145, fg_color="green", hover_color="#2D9334", command=save_user)
             save_button.place(x=180, y=310)
