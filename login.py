@@ -59,24 +59,11 @@ class Aplication():
         checkbox.place(x=25, y=235)
 
         #botão de login
-        def login():
-
-            #remover o frame de login
-            login_frame.pack_forget()
-
-            #criando a tela de cadastro de usuario
-            rg_frame = ctk.CTkFrame(master=janela, width=370, height=396)
-            rg_frame.pack(side=RIGHT)
-
-            label = ctk.CTkLabel(master=rg_frame, text='Tela principal', font = ('Roboto', 20, 'bold'), text_color= ('black'))
-            label.place(x=25, y=35)
-
-            
-
+        
+        def login():    
             User = username_login.get()
             password = password_entry.get()
             
-
             database.cursor.execute("""
                 SELECT * FROM users WHERE(Username = ? and
                 Password = ?)  
@@ -84,26 +71,112 @@ class Aplication():
             VerifyLogin = database.cursor.fetchone()
             try:
                 if(User in VerifyLogin and password in VerifyLogin):
-                  # messagebox.showinfo(title="Estado de Login",message="Parabens!login feito com sucesso.")
-                   pass
-
-                #devolvendo o frame de login
-                def back():
-                        rg_frame.pack_forget()
-
-                        login_frame.pack(side=RIGHT) 
-                
-            except:
-                msg = messagebox.showinfo(title="Estado de Login",message="Acesso negado verifique as informções e tente novamente.")                  
-                             
-                                             
-          
-
-              
-
-            back_button = ctk.CTkButton(master=rg_frame, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
-            back_button.place(x=25, y=310)          
+                #remover o frame de login
+                 login_frame.pack_forget()  
                   
+                #criando a tela principal
+                rg_frame = ctk.CTkFrame(master=janela, width=370, height=396)
+                rg_frame.pack(side=RIGHT)
+
+                label = ctk.CTkLabel(master=rg_frame, text='Tela principal', font = ('Roboto', 20, 'bold'), text_color= ('black'))
+                label.place(x=25, y=35)                                
+                                                    
+            except:
+                messagebox.showerror (title="Estado de Login",message="Acesso negado verifique as informções e tente novamente.")                  
+                      
+            
+
+            #                                 
+            
+            #devolvendo o frame de login
+            def back():
+                rg_frame.pack_forget()
+
+                login_frame.pack(side=RIGHT) 
+                    
+            back_button = ctk.CTkButton(master=rg_frame, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
+            back_button.place(x=25, y=310)  
+            
+            def tela2(): 
+             
+              rg_frame.pack_forget()
+
+              #criando a tela de cadastro de usuario
+              rg_frame2 = ctk.CTkFrame(master=janela, width=370, height=396)
+              rg_frame2.pack(side=RIGHT) 
+              
+              #frames de login
+              label = ctk.CTkLabel(master=rg_frame2, text='Faça seu cadastro', font = ('Roboto', 20, 'bold'), text_color= ('black'))
+              label.place(x=25, y=35)
+
+              span = ctk.CTkLabel(master=rg_frame2, text='*Por favor preencha todos os campos corretamente', font = ('Roboto', 12), text_color= "gray")
+              span.place(x=25, y=75)
+
+              username_login = ctk.CTkEntry(master=rg_frame2, placeholder_text='Login do usuario',width=300, font = ('Roboto',15))
+              username_login.place(x=25, y=105)
+
+              email_login = ctk.CTkEntry(master=rg_frame2, placeholder_text='E-mail de usuario',width=300, font = ('Roboto',15))
+              email_login.place(x=25, y=145)
+
+              password_login = ctk.CTkEntry(master=rg_frame2, placeholder_text='Senha',width=300, font = ('Roboto',15), show="*")
+              password_login.place(x=25, y=185)
+
+              cpassword_login = ctk.CTkEntry(master=rg_frame2, placeholder_text='Confirme a Senha',width=300, font = ('Roboto',15), show="*")
+              cpassword_login.place(x=25, y=225)
+
+              checkbox = ctk.CTkCheckBox(master=rg_frame2, text="Aceito os termos e Politicas  da empresa")
+              checkbox.place(x=25, y=270)
+              
+              #devolvendo o frame de login
+              def back():
+                rg_frame2.pack_forget()
+
+                rg_frame.pack(side=RIGHT)
+                
+              back_button = ctk.CTkButton(master=rg_frame2, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
+              back_button.place(x=25, y=310)
+              
+              #salvando os dados
+              def save_user():
+
+                Name =  username_login.get ()
+                Email = email_login.get ()
+                Password = password_login.get ()  
+                Cpasswords = cpassword_login.get()
+
+                #logica para cadastrar corretamente
+                if Name == "" :
+                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
+                elif  Email == "":
+                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
+                    
+                elif  Password == "" :
+                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
+                
+                elif Cpasswords == "":
+                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")  
+
+                elif Cpasswords != Password :  
+                    messagebox.showerror(title="Estado do Cadastro", message="As senhas precisam ser iguais!.")
+                
+                else:    
+                    database.cursor.execute(""" 
+                                INSERT INTO users  (Username , Email , Password )  VALUES(?,?,?)
+                    """,(Name,Email,Password)) 
+                    database.conn.commit()                            
+                    msg = messagebox.showinfo(title="Estado do Cadastro", message="Parabens! Usuario cadastrado com sucesso.")
+                    pass
+               
+
+              save_button = ctk.CTkButton(master=rg_frame2, text="Cadastrar", width=145, fg_color="green", hover_color="#2D9334", command=save_user)
+              save_button.place(x=180, y=310)           
+
+                       
+            cadastro_button = ctk.CTkButton(master=rg_frame, text="Cadastrar usuario", width=150, fg_color="green", hover_color="#2D9334", command=tela2)
+            cadastro_button.place(x=175, y=310)           
+                     
+                
+                                                        
         login_button = ctk.CTkButton(master=login_frame, text="Login", width=300, command=login)
         login_button.place(x=25, y=285)
 
