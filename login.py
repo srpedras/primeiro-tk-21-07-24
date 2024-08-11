@@ -82,12 +82,9 @@ class Aplication():
                 label.place(x=25, y=35)                                
                                                     
             except:
-                messagebox.showerror (title="Estado de Login",message="Acesso negado verifique as informções e tente novamente.")                  
-                      
-            
-
-            #                                 
-            
+                messagebox.showerror (title="Estado de Login",message="Acesso negado verifique as informções e tente novamente.")                 
+                                
+                                   
             #devolvendo o frame de login
             def back():
                 rg_frame.pack_forget()
@@ -173,8 +170,27 @@ class Aplication():
 
                        
             cadastro_button = ctk.CTkButton(master=rg_frame, text="Cadastrar usuario", width=150, fg_color="green", hover_color="#2D9334", command=tela2)
-            cadastro_button.place(x=175, y=310)           
+            cadastro_button.place(x=175, y=310) 
+            
+            def tela3(): 
+             
+              rg_frame.pack_forget()
+
+              #criando a tela de cadastro de usuario
+              rg_frame2 = ctk.CTkFrame(master=janela, width=370, height=396)
+              rg_frame2.pack(side=RIGHT) 
+              
+              #devolvendo o frame de login
+              def back():
+                rg_frame2.pack_forget()
+
+                rg_frame.pack(side=RIGHT)
+                
+              back_button = ctk.CTkButton(master=rg_frame2, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
+              back_button.place(x=25, y=310) 
                      
+            cadastro_button = ctk.CTkButton(master=rg_frame, text="Guardar novo login", width=150, fg_color="green", hover_color="#2D9334", command=tela3)
+            cadastro_button.place(x=175, y=240)      
                 
                                                         
         login_button = ctk.CTkButton(master=login_frame, text="Login", width=300, command=login)
