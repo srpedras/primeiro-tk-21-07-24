@@ -215,6 +215,12 @@ class Aplication():
               back_button = ctk.CTkButton(master=rg_frame2, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
               back_button.place(x=25, y=310) 
 
+              back_button = ctk.CTkButton(master=rg_frame2, text="Deletar cadastro", width=145, fg_color="green", hover_color="#2D9334", command=back)
+              back_button.place(x=180, y=350)
+
+              back_button = ctk.CTkButton(master=rg_frame2, text="Atualizar cadastro", width=145, fg_color="green", hover_color="#2D9334", command=back)
+              back_button.place(x=25, y=350)
+
               #salvando os dados
               def save_user():
 
