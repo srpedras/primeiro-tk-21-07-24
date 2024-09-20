@@ -1,4 +1,7 @@
+import tkinter as tk
 import customtkinter as ctk
+import bcrypt
+
 from tkinter import *
 import database
 from tkinter import messagebox
@@ -14,7 +17,7 @@ class Aplication():
         #self.tema()
         self.tela_login()
         janela.mainloop()
-        self.tela2()
+        "self.tela2()"
 
     #def tema(self):    
         ctk.set_appearance_mode("dark")
@@ -24,12 +27,12 @@ class Aplication():
     def tela(self):
         janela.geometry("700x400")
         janela.title("Meu cadastro")
-        janela.iconbitmap("icons/logoIcon.ico")
+        janela.iconbitmap("logoIcon.ico")
         janela.resizable(False, False)
 
     def tela_login(self):
         #trabalhnado com as imagens
-        img = PhotoImage(file="icons/rosto.png")
+        img = tk.PhotoImage(file="rosto.png")
         label_img = ctk.CTkLabel(master=janela, image=img, text=None)
         label_img.place(x=45, y=70)
         label_text = ctk.CTkLabel(master=janela, text='Bem vindo ao seu sitema cadastro', font = ('Roboto', 18), text_color= ('black'))
@@ -63,28 +66,35 @@ class Aplication():
         def login():   
 
             
-            User = username_login.get()
+            username = username_login.get()
             password = password_entry.get()
             
-            database.cursor.execute("""
-                SELECT * FROM users WHERE(Username = ? and
-                Password = ?)  
-                """,(User,password))
-            VerifyLogin = database.cursor.fetchone()
-            try:
-                if(User in VerifyLogin and password in VerifyLogin):
-                #remover o frame de login
-                 login_frame.pack_forget()  
-                  
-                #criando a tela principal
-                rg_frame = ctk.CTkFrame(master=janela, width=370, height=396)
-                rg_frame.pack(side=RIGHT)
+            # Fetch user data from database
+            database.cursor.execute("SELECT Username, Password FROM users WHERE Username = ?", (username,))
+            user_data = database.cursor.fetchone()
 
-                label = ctk.CTkLabel(master=rg_frame, text='Tela principal', font = ('Roboto', 20, 'bold'), text_color= ('black'))
-                label.place(x=25, y=35)                                
-                                                    
-            except:
-                messagebox.showerror (title="Estado de Login",message="Acesso negado verifique as informções e tente novamente.")                 
+            if user_data:  # Check if user exists
+                hashed_password = user_data[1]  # Assuming the hashed password is at index 1
+
+                # Verify password using bcrypt
+                if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+                    # Login successful
+                    # Remove login frame
+                    login_frame.pack_forget()
+
+                    # Create main window
+                    rg_frame = ctk.CTkFrame(master=janela, width=370, height=396)
+                    rg_frame.pack(side=RIGHT)
+
+                    label = ctk.CTkLabel(master=rg_frame, text='Tela principal', font=('Roboto', 20, 'bold'), text_color=('black'))
+                    label.place(x=25, y=35)
+                else:
+                    # Login failed - Incorrect password
+                    messagebox.showerror(title="Estado de Login", message="Acesso negado, verifique a senha e tente novamente.")
+            else:
+                # Login failed - Username not found
+                messagebox.showerror(title="Estado de Login", message="Usuário não encontrado.")
+                        
                                 
                                    
             #devolvendo o frame de login
@@ -311,10 +321,14 @@ class Aplication():
             #salvando os dados
             def save_user():
 
+                
                 Name =  username_login.get ()
                 Email = email_login.get ()
-                Password = password_login.get ()  
+                Password = password_login.get ()
                 Cpasswords = cpassword_login.get()
+
+                hashed_password = bcrypt.hashpw(Password.encode('utf-8'), bcrypt.gensalt())    
+
 
                 #logica para cadastrar corretamente
                 if Name == "" :
@@ -333,8 +347,8 @@ class Aplication():
                 
                 else:    
                     database.cursor.execute(""" 
-                                INSERT INTO users  (Username , Email , Password )  VALUES(?,?,?)
-                    """,(Name,Email,Password)) 
+                                INSERT INTO users (Username, Email, Password) VALUES (?, ?, ?)
+                             """, (Name, Email, hashed_password)) 
                     database.conn.commit()                            
                     msg = messagebox.showinfo(title="Estado do Cadastro", message="Parabens! Usuario cadastrado com sucesso.")
                     pass

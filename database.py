@@ -22,3 +22,10 @@ cursor.execute("""
 """)
 
 print("Conexão de dados feita com sucessos!")
+
+
+
+
+
+
+
