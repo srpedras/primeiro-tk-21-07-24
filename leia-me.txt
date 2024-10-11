@@ -1,2 +1,10 @@
-login: admin	
-password: admin123
+login: adm	
+password: adm123
+
+se for programador:
+
+no vscode ative o ambiente virtual: .\venv\Scripts\activate
+depois desinstale o bcrypt: pip uninstall bcrypt
+feche o vscode e abra de novo. ative o ambiente virtual novamente: .\venv\Scripts\activate
+ e instale o bcrypt novamente: pip install bcrypt
+se precisar reinstale o customtkinter

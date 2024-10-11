@@ -1,5 +1,6 @@
 import tkinter as tk
 import customtkinter as ctk
+from tkinter import ttk
 import bcrypt
 
 from tkinter import *
@@ -226,10 +227,45 @@ class Aplication():
               back_button.place(x=25, y=310) 
 
               back_button = ctk.CTkButton(master=rg_frame2, text="Deletar cadastro", width=145, fg_color="green", hover_color="#2D9334", command=back)
-              back_button.place(x=180, y=350)
+              back_button.place(x=180, y=350) 
+              
+                
+              # Função para visualizar os cadastros
+              # Variável global para armazenar o nome de usuário logado (ajuste conforme sua implementação)
+              
+              
+              def visualizar_cadastros():
+              
+                conn = database.conn.cursor()
+                if conn is None:
+                    messagebox.showerror("Erro", "Não foi possível conectar ao banco de dados.")
+                    return 
+                cursor = database.conn.cursor()
+                cursor.execute("SELECT * FROM logins")  # Substitua 'logins' pelo nome da sua tabela
+                # Cria uma nova janela para exibir os resultados
+                resultados_window = tk.Toplevel(janela)
+                resultados_window.title("Cadastros")
+                
+                
+                
+                tree = ttk.Treeview(resultados_window, columns=("user", "email", "password"), show="headings")
+                tree.heading("user", text="Usuário")
+                tree.heading("email", text="Email")
+                tree.heading("password", text="Senha")
+                tree.pack(fill="both", expand=True)
+                
+                
+                # Insert the data into the text widget, displaying the password (not recommended)
+                # Insere os dados no Treeview
+                for row in cursor.fetchall():
+                        tree.insert("", "end", values=(row[1], row[2], (row[3])))
 
-              back_button = ctk.CTkButton(master=rg_frame2, text="Atualizar cadastro", width=145, fg_color="green", hover_color="#2D9334", command=back)
-              back_button.place(x=25, y=350)
+                              
+                conn.close()
+
+              # Button to visualize passwords
+              visualize_button = ctk.CTkButton(master=rg_frame2, text="Visualize Passwords", width=145, fg_color="green",  hover_color="#2D9334", command=visualizar_cadastros)
+              visualize_button.place(x=25, y=350)
 
               #salvando os dados
               def save_user():
@@ -240,34 +276,37 @@ class Aplication():
                 Cpasswords = cpassword_login.get()
 
                 #logica para cadastrar corretamente
-                if Name == "" :
-                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
-                elif  Email == "":
-                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
-                    
-                elif  Password == "" :
-                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")
-                
-                elif Cpasswords == "":
-                    messagebox.showerror(title="Register erro", message= "Não deixe nenhum campo vazio")  
+                 # Input validation
+                if not Name or not Email or not Password or not Cpasswords:
+                 messagebox.showerror(title="Register Error", message="Por favor prencha todos os campos.")
+                 return
 
-                elif Cpasswords != Password :  
-                    messagebox.showerror(title="Estado do Cadastro", message="As senhas precisam ser iguais!.")
+                if Password != Cpasswords:
+                 messagebox.showerror(title="Register Error", message="As senhas precisam ser iguais.")
+                 return
                 
-                else:    
+                # Hashing the password with bcrypt
+                hashed_password = bcrypt.hashpw(Password.encode('utf-8'), bcrypt.gensalt())
+
+                # Logic to insert data into database (replace with your actual database interaction)
+                try:    
                     database.cursor.execute(""" 
                                 INSERT INTO logins  (Username , Email , Password )  VALUES(?,?,?)
-                    """,(Name,Email,Password)) 
+                    """,(Name,Email,Password))
                     database.conn.commit()                            
                     msg = messagebox.showinfo(title="Estado do Cadastro", message="Parabens! Usuario cadastrado com sucesso.")
-                    pass
+                except Exception as e:
+                    messagebox.showerror(title="Registration Error", message=f"An error occurred: {str(e)}")
+
                
 
               save_button = ctk.CTkButton(master=rg_frame2, text="Cadastrar", width=145, fg_color="green", hover_color="#2D9334", command=save_user)
               save_button.place(x=180, y=310) 
                      
             cadastro_button = ctk.CTkButton(master=rg_frame, text="Guardar novo login", width=150, fg_color="green", hover_color="#2D9334", command=tela3)
-            cadastro_button.place(x=195, y=240)      
+            cadastro_button.place(x=195, y=240) 
+            
+                 
                 
                                                         
         login_button = ctk.CTkButton(master=login_frame, text="Login", width=300, command=login)
@@ -317,6 +356,8 @@ class Aplication():
 
             back_button = ctk.CTkButton(master=rg_frame, text="Voltar", width=145, fg_color="green", hover_color="#2D9334", command=back)
             back_button.place(x=25, y=310)
+            
+            
 
             #salvando os dados
             def save_user():
@@ -356,7 +397,9 @@ class Aplication():
 
             save_button = ctk.CTkButton(master=rg_frame, text="Cadastrar", width=145, fg_color="green", hover_color="#2D9334", command=save_user)
             save_button.place(x=180, y=310)
-           
+            
+            
+                     
 
         cadastro_button = ctk.CTkButton(master=login_frame, text="Cadastrar usuario", width=150, fg_color="green", hover_color="#2D9334", command=tela_register)
         cadastro_button.place(x=175, y=330)

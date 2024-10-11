@@ -11,7 +11,10 @@ cursor.execute("""
                Email VARCHAR NOT NULL,
                Password VARCHAR NOT NULL
                )
+     
+         
 """)
+
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS logins (
      ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
